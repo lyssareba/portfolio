@@ -37,6 +37,18 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.(index.html)$/,
+        use: [
+          { loader: "file-loader" },
+          { loader: "extract-loader" },
+          {
+            loader: 'html-loader',
+            options: {
+              attrs: [':data-src']
+            }
+          }]
       }
     ]
   },
@@ -44,7 +56,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Robinson Portfolio',
       // filename: 'public/index.html',
-      template: 'underscore-template-loader!./public/index.html',
+      template: './public/index.html',
       favicon: 'public/favicon.ico',
       meta: {
         viewport: 'width=device-width, initial-scale=1',

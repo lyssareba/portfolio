@@ -11,7 +11,7 @@ const App = () => {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/dynamic" component={DynamicPage} />
-        <Route component={Match} />
+        <Route component={NoMatch} />
       </Switch>
     </Router>
   );
