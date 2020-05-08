@@ -8,20 +8,22 @@ module.exports = {
   mode: 'development',
   entry: './src/index.js',
   output: {
-    filename: 'bundle.[hash].js'
+    filename: '[name].[hash].js',
+    publicPath: '/',
+  },
+  resolve: {
+    alias: {
+      "react-dom": "@hot-loader/react-dom",
+    },
   },
   devtool: 'inline-source-map',
   module: {
     rules: [
-
-      // First Rule
       {
         test: /\.(js)$/,
         exclude: /node_modules/,
         use: ['babel-loader']
       },
-
-      // Second Rule
       {
         test: /\.css$/,
         use: [
@@ -48,11 +50,13 @@ module.exports = {
             options: {
               attrs: [':data-src']
             }
-          }]
-      }
+          }
+        ]
+      },
     ]
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       title: 'Robinson Portfolio',
       // filename: 'public/index.html',
@@ -61,12 +65,13 @@ module.exports = {
       meta: {
         viewport: 'width=device-width, initial-scale=1',
       },
-    })
+    }),
   ],
   devServer: {
     host: 'localhost',
     port: port,
     historyApiFallback: true,
-    open: true
+    open: true,
+    hot: true,
   },
 };
