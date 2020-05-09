@@ -1,60 +1,25 @@
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const buildValidation = require('./build-utils/build-validations');
+const commonConfig = require('./build-utils/webpack.common');
 
-const port = process.env.PORT || 3000;
+const webpackMerge = require('webpack-merge');
 
-module.exports = {
-  // Webpack configuration goes here
-  mode: 'development',
-  entry: './src/index.js',
-  output: {
-    filename: 'bundle.[hash].js'
-  },
-  devtool: 'inline-source-map',
-  module: {
-    rules: [
+const addons = (/* string | string[] */ addonsArg) => {
+  let addons = [...[addonsArg]]
+    .filter(Boolean);
+  return addons.map(addonName => require(`./build-utils/addons/webpack.${addonName}.js`));
+};
 
-      // First Rule
-      {
-        test: /\.(js)$/,
-        exclude: /node_modules/,
-        use: ['babel-loader']
-      },
+module.exports = env => {
+  if (!env) {
+    throw new Error(buildValidation.ERR_NO_ENV_FLAG);
+  }
 
-      // Second Rule
-      {
-        test: /\.css$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              localsConvention: 'camelCase',
-              sourceMap: true
-            }
-          }
-        ]
-      }
-    ]
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: 'Robinson Portfolio',
-      // filename: 'public/index.html',
-      template: 'underscore-template-loader!./public/index.html',
-      favicon: 'public/favicon.ico',
-      meta: {
-        viewport: 'width=device-width, initial-scale=1',
-      },
-    })
-  ],
-  devServer: {
-    host: 'localhost',
-    port: port,
-    historyApiFallback: true,
-    open: true
-  },
+  const envConfig = require(`./build-utils/webpack.${env.env}.js`);
+
+  const mergedConfig = webpackMerge(
+    commonConfig,
+    envConfig,
+    ...addons(env.addons)
+  );
+  return mergedConfig;
 };

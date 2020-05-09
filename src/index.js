@@ -1,5 +1,11 @@
 import React from 'react';
 import ReactDom from 'react-dom';
+import { hot } from 'react-hot-loader/root';
 import App from './components/App';
 
-ReactDom.render(<App />, document.getElementById('root'));
+// import './index.css';
+
+const render = (Component) =>
+  ReactDom.render(<Component />, document.getElementById('root'));
+
+render(hot(App));
